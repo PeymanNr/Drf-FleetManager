@@ -391,6 +391,8 @@ fabric.properties
 .history
 .ionide
 
+local_*.py
+local_*.txt
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,database,django,pycharm,python
