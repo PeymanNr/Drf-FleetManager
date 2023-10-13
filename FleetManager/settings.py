@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+
+from django.conf import settings
+
 from .local_settings import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,7 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'accounts',
-    'rest_framework.authtoken',
+    'django.test',
     'drf_yasg',
 ]
 
@@ -50,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'accounts.middleware.TokenMiddleware',
+    # 'accounts.middleware.TokenMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -89,7 +92,6 @@ DATABASES = {
         'PORT': DB_PORT,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
