@@ -15,4 +15,4 @@ class OTPCodeAdmin(admin.ModelAdmin):
 
 @register(Car)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('company',)
+    list_display = ('id', 'company')

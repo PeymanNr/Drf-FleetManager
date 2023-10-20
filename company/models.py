@@ -17,6 +17,14 @@ class Company(models.Model):
     name = models.CharField(max_length=255, validators=[name_regex], verbose_name=_('name'))
     car_count = models.PositiveIntegerField(default=0, verbose_name=_('car count'))
 
+    class Meta:
+        verbose_name = _('company')
+        verbose_name_plural = _('companies')
+        db_table = 'company'
+
+    def __str__(self):
+        return self.name
+
 
 class OTPCode(models.Model):
     code = models.CharField(max_length=6, verbose_name=_('code'))
@@ -27,6 +35,23 @@ class OTPCode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('user'), related_name='otp_codes')
     car_count = models.PositiveIntegerField(default=0, verbose_name=_('car count'))
 
+    class Meta:
+        verbose_name = _('OTPCode')
+        verbose_name_plural = _('OTPCodes')
+        db_table = 'OTPCode'
+
+    def __str__(self):
+        return self.user.username
+
 
 class Car(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name=_('user'))
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name=_('company'))
+
+    class Meta:
+        verbose_name = _('car')
+        verbose_name_plural = _('cars')
+        db_table = 'car'
+
+    def __str__(self):
+        return self.company.name
+

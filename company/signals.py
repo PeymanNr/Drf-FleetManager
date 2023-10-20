@@ -1,10 +1,12 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from company.models import Car
+from company.models import Car, Company
 
 
-@receiver(post_save, sender=Car)
-def update_car_count(sender, instance, **kwargs):
-    company = instance.company
-    company.car_count = Car.objects.filter(company=company).count()
-    company.save()
+@receiver(post_save, sender=Company)
+def create_initial_cars(sender, instance, created,  **kwargs):
+    if created:
+        car_counts = instance.car_count
+
+        for _ in range(car_counts):
+            Car.objects.create(company=instance)

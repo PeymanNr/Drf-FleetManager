@@ -1,10 +1,11 @@
 import random
+from django.db.models.signals import post_save
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from company.api.serilizers import CompanySerializer
-from company.models import OTPCode
+from company.models import OTPCode, Car
 from company.sms_utils import SMSUtil
 
 
@@ -44,7 +45,6 @@ class VerifyOTPView(APIView):
                 otp.is_used = True
                 otp.save()
                 return Response({'message': 'The OTP code has been successfully verified.'}, status=status.HTTP_200_OK)
-                # return redirect('company-registration', company_id=otp.user.company.id)
 
             else:
                 otp.is_expired = True
@@ -59,9 +59,10 @@ class CreateCompanyView(APIView):
         serializer = CompanySerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            company = serializer.save(user=request.user)
+
+            post_save.send(sender=Car, instance=company, created=True)
 
             return Response({'message': 'Company created successfully.'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
