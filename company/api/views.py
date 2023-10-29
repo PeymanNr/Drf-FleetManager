@@ -4,12 +4,15 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from FleetManager.local_settings import api_key
 from company.api.serilizers import CompanySerializer
 from company.models import OTPCode, Car
 from company.sms_utils import SMSUtil
+from rest_framework.permissions import IsAuthenticated
 
 
 class SendOTPView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         receptor = request.data.get('phone_number')
@@ -17,25 +20,30 @@ class SendOTPView(APIView):
         if not receptor:
             return Response({'error': 'Phone Number is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        otp_code = ''.join(random.choices("0123456789", k=6))
+        try:
+            previous_otp = OTPCode.objects.filter(user=request.user).first()
+            if previous_otp:
+                previous_otp.delete()
 
-        api_key = '546F2F307876396E4468796347514E484271434667753975744942384E74614E4D742F6A652F45473753593D'
-        sender = '1000689696'
-        message = f'Code OTP: {otp_code}'
-        sms_util = SMSUtil(api_key)
+            otp_code = ''.join(random.choices("0123456789", k=6))
+            sender = '0018018949161'
+            message = f'Code OTP: {otp_code}'
+            sms_util = SMSUtil(api_key)
 
-        response = sms_util.send_sms(sender, receptor, message)
+            response = sms_util.send_sms(sender, receptor, message)
 
-        if response:
-            otp = OTPCode(code=otp_code, user=request.user)
-            otp.save()
+            if response:
+                otp = OTPCode(code=otp_code, user=request.user)
+                otp.save()
 
-            request.user.registration_step = 3
-            request.user.save()
+                request.user.registration_step = 3
+                request.user.save()
 
-            return Response({'message': 'Code OTP Sent.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'Error sending SMS.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({'message': 'Code OTP Sent.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Error sending SMS.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VerifyOTPView(APIView):

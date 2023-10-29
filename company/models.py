@@ -13,7 +13,7 @@ class Company(models.Model):
                 message='The name should only contain Farsi letters and spaces',
                 code='invalid_name'
             )
-    user = models.ForeignKey(User, verbose_name=_('user'), on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name=_('user'), on_delete=models.PROTECT)
     name = models.CharField(max_length=255, validators=[name_regex], verbose_name=_('name'))
     car_count = models.PositiveIntegerField(default=0, verbose_name=_('car count'))
 
@@ -27,12 +27,12 @@ class Company(models.Model):
 
 
 class OTPCode(models.Model):
-    code = models.CharField(max_length=6, verbose_name=_('code'))
+    code = models.CharField(max_length=6, verbose_name=_('code'), unique=True, db_index=True)
     sent_at = models.DateTimeField(default=timezone.now, verbose_name=_('sent_at'))
     last_sent_at = models.DateTimeField(null=True, blank=True)
     is_expired = models.BooleanField(default=False, verbose_name=_('is_expired'))
     is_used = models.BooleanField(default=False, verbose_name=_('is_used'))
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('user'), related_name='otp_codes')
+    user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name=_('user'), related_name='otp_codes')
 
     class Meta:
         verbose_name = _('OTPCode')
@@ -44,7 +44,7 @@ class OTPCode(models.Model):
 
 
 class Car(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name=_('company'))
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name=_('company'))
 
     class Meta:
         verbose_name = _('car')
