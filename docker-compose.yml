@@ -9,3 +9,9 @@ services:
     volumes:
       - .:/fleetmanager
 
+  db_test:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: testuser1
+      POSTGRES_PASSWORD: 932319361

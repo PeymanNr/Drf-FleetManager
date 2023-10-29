@@ -11,7 +11,7 @@ class UserRegisterAPITest(unittest.TestCase):
         self.client = APIClient()
         self.register_url = reverse('user-register')
         self.valid_payload = {
-            'username': 'testuser232',
+            'username': 'testuser2832',
             'password': 'testpassword123P'
         }
         self.invalid_payload = {

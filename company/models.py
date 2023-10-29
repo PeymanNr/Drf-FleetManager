@@ -33,7 +33,6 @@ class OTPCode(models.Model):
     is_expired = models.BooleanField(default=False, verbose_name=_('is_expired'))
     is_used = models.BooleanField(default=False, verbose_name=_('is_used'))
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('user'), related_name='otp_codes')
-    car_count = models.PositiveIntegerField(default=0, verbose_name=_('car count'))
 
     class Meta:
         verbose_name = _('OTPCode')

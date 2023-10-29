@@ -29,6 +29,10 @@ class SendOTPView(APIView):
         if response:
             otp = OTPCode(code=otp_code, user=request.user)
             otp.save()
+
+            request.user.registration_step = 3
+            request.user.save()
+
             return Response({'message': 'Code OTP Sent.'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Error sending SMS.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -37,19 +41,24 @@ class SendOTPView(APIView):
 class VerifyOTPView(APIView):
     def post(self, request):
         otp_code = request.data.get('otp_code')
+        registration_step = request.user.registration_step
 
         try:
             otp = OTPCode.objects.get(code=otp_code)
 
-            if (timezone.now() - otp.sent_at).total_seconds() <= 120:
-                otp.is_used = True
-                otp.save()
-                return Response({'message': 'The OTP code has been successfully verified.'}, status=status.HTTP_200_OK)
-
+            if registration_step == 3:
+                if (timezone.now() - otp.sent_at).total_seconds() <= 120:
+                    otp.is_used = True
+                    otp.save()
+                    return Response({'message': 'The OTP code has been successfully verified.'},
+                                    status=status.HTTP_200_OK)
+                else:
+                    otp.is_expired = True
+                    otp.save()
+                    return Response({'error': 'The OTP code has expired.'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                otp.is_expired = True
-                otp.save()
-                return Response({'error': 'The OTP code has expired.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Invalid registration step for OTP verification.'},
+                                status=status.HTTP_400_BAD_REQUEST)
         except OTPCode.DoesNotExist:
             return Response({'error': 'The OTP code is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
 

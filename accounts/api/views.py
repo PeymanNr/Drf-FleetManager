@@ -15,6 +15,10 @@ class UserRegisterAPIView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+
+            user.registration_step = 2
+            user.save()
+
             refresh = RefreshToken.for_user(user)
             return Response({
                 'user': serializer.data,
@@ -26,3 +30,12 @@ class UserRegisterAPIView(APIView):
 
 class UserLoginAPIView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class GetUserRegistrationStatus(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        registration_step = request.user.registration_step
+
+        return Response({'registration_step': registration_step}, status=status.HTTP_200_OK)

@@ -44,6 +44,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         token['user_id'] = user.id
+        token['registration_step'] = user.registration_step
 
         return token
 
