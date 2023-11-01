@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-
 ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'accounts',
+    'company',
     'django.test',
     'drf_yasg',
 ]
@@ -46,6 +46,8 @@ INSTALLED_APPS = [
 SWAGGER_SETTINGS = {
     'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
 }
+
+ASGI_APPLICATION = "FleetManager.asgi.application"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
