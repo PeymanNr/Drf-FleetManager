@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'company',
     'django.test',
     'drf_yasg',
+    'tracking',
 ]
 
 SWAGGER_SETTINGS = {
