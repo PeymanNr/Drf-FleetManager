@@ -52,5 +52,5 @@ class Car(models.Model):
         db_table = 'car'
 
     def __str__(self):
-        return self.company.name
+        return str(self.id)
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from company.models import Car, Company
+from company.models import Car
 
 
 class Location(models.Model):
@@ -20,14 +20,4 @@ class Location(models.Model):
     def __str__(self):
         return f'Location for Car {self.car_id} at {self.created_at}'
 
-
-class Metric(models.Model):
-    speed_range = models.CharField(max_length=100)
-    location_type = models.CharField(max_length=100)
-    acceleration_range = models.CharField(max_length=100)
-
-    class Meta:
-        verbose_name = _('metric')
-        verbose_name_plural = _('metrics')
-        db_table = 'metric'
 

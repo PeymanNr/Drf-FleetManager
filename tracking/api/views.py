@@ -1,29 +1,48 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from tracking.api.serilizers import LocationSerializer, MetricSerializer
+from django.http import Http404
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
+from tracking.api.serializers import LocationSerializer, CarInformationSerializer, ReportFilter, ReportSerializer
+from tracking.models import Location
+from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 
-class LocationAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-
-        serializer = LocationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response("Location Saved", status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class LocationAPIView(CreateAPIView):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+    permission_classes = (IsAuthenticated,)
 
 
-class MetricAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = MetricSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+class CarInformationView(RetrieveAPIView):
+    serializer_class = CarInformationSerializer
+    permission_classes = (IsAuthenticated,)
 
-            return Response("Metric Saved", status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_object(self):
+        car_id = self.kwargs.get('car_id')
+        try:
+            queryset = Location.objects.filter(car_id=car_id).latest('created_at')
+        except Location.DoesNotExist:
+            raise Http404("Location not found for the specified car_id.")
+        return queryset
 
 
+# A decorator that caches 🔂 the page for 3 minutes.
+@method_decorator(cache_page(60 * 3), name='dispatch')
+class ReportAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ReportFilter
+    serializer_class = ReportSerializer
 
+    def get_queryset(self):
+        car_id = self.kwargs.get('car_id')
+
+        try:
+            location = Location.objects.filter(car_id=car_id).order_by('-created_at').first()
+            if not location:
+                raise Location.DoesNotExist
+        except Location.DoesNotExist:
+            raise Http404("Location not found for the specified car_id.")
+
+        return Location.objects.filter(pk=location.pk)
