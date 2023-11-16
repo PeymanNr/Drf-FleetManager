@@ -18,7 +18,8 @@ class SendOTPView(APIView):
         receptor = request.data.get('phone_number')
 
         if not receptor:
-            return Response({'error': 'Phone Number is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Phone Number is required.'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         try:
             otp_code = ''.join(random.choices("0123456789", k=6))
@@ -26,9 +27,7 @@ class SendOTPView(APIView):
             message = f'Code OTP: {otp_code}'
             sms_util = SMSUtil(api_key)
 
-            # ارسال پیامک
             response = sms_util.send_sms(sender, receptor, message)
-
             if response:
                 cache_key = f'otp:{request.user.id}'
                 cache.set(cache_key, otp_code, 120)
@@ -36,11 +35,14 @@ class SendOTPView(APIView):
                 request.user.registration_step = 3
                 request.user.save()
 
-                return Response({'message': 'Code OTP Sent.'}, status=status.HTTP_200_OK)
+                return Response({'message': 'Code OTP Sent.'},
+                                status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'Error sending SMS.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({'error': 'Error sending SMS.'},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f'An error occurred: {str(e)}'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VerifyOTPView(APIView):
@@ -56,15 +58,20 @@ class VerifyOTPView(APIView):
                 cache.delete(cache_key)
 
                 if registration_step == 3:
-                    return Response({'message': 'The OTP code has been successfully verified.'},
-                                    status=status.HTTP_200_OK)
+                    return Response({
+                        'message': 'The OTP code has successfully verified.'},
+                        status=status.HTTP_200_OK)
                 else:
-                    return Response({'error': 'Invalid registration step for OTP verification.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
+                    return Response({
+                        'error': 'Invalid registration for OTP verification.'},
+                        status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'error': 'The OTP code is invalid or has expired.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {'error': 'The OTP code is invalid or has expired.'},
+                    status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f'An error occurred: {str(e)}'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CreateCompanyView(APIView):
@@ -76,6 +83,8 @@ class CreateCompanyView(APIView):
 
             post_save.send(sender=Car, instance=company, created=True)
 
-            return Response({'message': 'Company created successfully.'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Company created successfully.'},
+                            status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)

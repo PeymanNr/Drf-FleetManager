@@ -19,7 +19,8 @@ def calculate_distance_points(lat1, lon1, lat2, lon2):
 
     dlon = lon2_rad - lon1_rad
     dlat = lat2_rad - lat1_rad
-    a = math.sin(dlat / 2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2) ** 2
+    a = math.sin(dlat / 2) ** 2 + math.cos(lat1_rad) * math.cos(
+        lat2_rad) * math.sin(dlon / 2) ** 2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = 6371 * c
 

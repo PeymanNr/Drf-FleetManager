@@ -14,18 +14,23 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError('This username is already in use.')
+            raise serializers.ValidationError(
+                'This username is already in use.')
         return value
 
     def validate_password(self, value):
         if len(value) < 6:
-            raise serializers.ValidationError('The password must be at least 6 characters long.')
+            raise serializers.ValidationError(
+                'The password must be at least 6 characters long.')
         if not any(char.isdigit() for char in value):
-            raise serializers.ValidationError('Password must contain at least one number.')
+            raise serializers.ValidationError(
+                'Password must contain at least one number.')
         if not any(char.islower() for char in value):
-            raise serializers.ValidationError('The password must contain at least one lowercase letter.')
+            raise serializers.ValidationError(
+                'The password must contain at least one lowercase letter.')
         if not any(char.isupper() for char in value):
-            raise serializers.ValidationError('Password must contain at least one capital letter.')
+            raise serializers.ValidationError(
+                'Password must contain at least one capital letter.')
         return value
 
     def create(self, validated_data):
@@ -47,4 +52,3 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['registration_step'] = user.registration_step
 
         return token
-

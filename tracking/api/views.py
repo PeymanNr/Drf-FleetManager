@@ -1,11 +1,11 @@
 from django.http import Http404
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
-from tracking.api.serializers import LocationSerializer, CarInformationSerializer, ReportFilter, ReportSerializer
+from tracking.api.serializers import LocationSerializer, \
+    CarInformationSerializer, ReportFilter, ReportSerializer
 from tracking.models import Location
 from django_filters.rest_framework import DjangoFilterBackend
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+
 
 class LocationAPIView(CreateAPIView):
     queryset = Location.objects.all()
@@ -20,7 +20,8 @@ class CarInformationView(RetrieveAPIView):
     def get_object(self):
         car_id = self.kwargs.get('car_id')
         try:
-            queryset = Location.objects.filter(car_id=car_id).latest('created_at')
+            queryset = Location.objects.filter(car_id=car_id).latest(
+                'created_at')
         except Location.DoesNotExist:
             raise Http404("Location not found for the specified car_id.")
         return queryset
@@ -36,7 +37,8 @@ class ReportAPIView(ListAPIView):
         car_id = self.kwargs.get('car_id')
 
         try:
-            location = Location.objects.filter(car_id=car_id).order_by('created_at').first()
+            location = Location.objects.filter(car_id=car_id).order_by(
+                'created_at').first()
             if not location:
                 raise Location.DoesNotExist
         except Location.DoesNotExist:

@@ -4,7 +4,6 @@ from datetime import timedelta
 
 
 def is_inside_tehran(latitude, longitude):
-
     tehran_boundary = {
         'latitude_min': 35.5,
         'latitude_max': 35.9,
@@ -12,8 +11,10 @@ def is_inside_tehran(latitude, longitude):
         'longitude_max': 51.7
     }
 
-    if (tehran_boundary['latitude_min'] <= latitude <= tehran_boundary['latitude_max'] and
-            tehran_boundary['longitude_min'] <= longitude <= tehran_boundary['longitude_max']):
+    if (tehran_boundary['latitude_min'] <= latitude <= tehran_boundary[
+        'latitude_max'] and
+            tehran_boundary['longitude_min'] <= longitude <= tehran_boundary[
+                'longitude_max']):
         return True
 
     return False
@@ -34,7 +35,8 @@ def get_filtered_acceleration_records(car_id, start_date, end_date):
     for location in filtered_locations:
         if prev_location:
             distance += calculate_distance_points(
-                prev_location.latitude, prev_location.longitude, location.latitude, location.longitude
+                prev_location.latitude, prev_location.longitude,
+                location.latitude, location.longitude
             )
             duration = location.created_at - prev_location.created_at
             total_duration += duration
@@ -59,7 +61,8 @@ def get_filtered_speed_records(car_id, start_date, end_date):
         end_location = locations[i + 1]
 
         total_distance += calculate_distance_points(
-            start_location.latitude, start_location.longitude, end_location.latitude, end_location.longitude
+            start_location.latitude, start_location.longitude,
+            end_location.latitude, end_location.longitude
         )
 
         duration = end_location.created_at - start_location.created_at
@@ -81,12 +84,13 @@ def calculate_distance_outside_tehran(car_id, start_date, end_date):
     total_duration = timedelta()
 
     for location in filtered_locations:
-        if prev_location and not is_inside_tehran(location.latitude, location.longitude):
+        if prev_location and not is_inside_tehran(location.latitude,
+                                                  location.longitude):
             total_distance += calculate_distance_points(
-                prev_location.latitude, prev_location.longitude, location.latitude, location.longitude
+                prev_location.latitude, prev_location.longitude,
+                location.latitude, location.longitude
             )
             duration = location.created_at - prev_location.created_at
-            # total_distance += distance
             total_duration += duration
 
         prev_location = location
@@ -107,7 +111,8 @@ def calculate_distance(car_id, start_date, end_date):
     for location in locations_distance:
         if prev_location:
             distance += calculate_distance_points(
-                prev_location.latitude, prev_location.longitude, location.latitude, location.longitude
+                prev_location.latitude, prev_location.longitude,
+                location.latitude, location.longitude
             )
             duration = location.created_at - prev_location.created_at
             total_duration += duration
