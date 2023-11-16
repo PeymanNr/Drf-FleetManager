@@ -25,15 +25,13 @@ class CarInformationSerializer(serializers.ModelSerializer):
 
     def get_is_speed_high(self, obj):
         if obj.speed >= 120:
-            return 'Speed Dangerous'
-        else:
-            return 'Speed Safe'
+            return True
+        return False
 
     def get_is_acceleration_high(self, obj):
-        if 10 <= obj.acceleration <= 30:
-            return 'Acceleration is Safe'
-        else:
-            'Acceleration is Dangerous'
+        if obj.acceleration >= 30:
+            return True
+        return False
 
 
 class ReportFilter(filters.FilterSet):

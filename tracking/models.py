@@ -19,5 +19,3 @@ class Location(models.Model):
 
     def __str__(self):
         return f'Location for Car {self.car_id} at {self.created_at}'
-
-

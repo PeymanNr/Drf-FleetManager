@@ -48,4 +48,3 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
-

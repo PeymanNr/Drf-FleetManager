@@ -4,8 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from tracking.api.serializers import LocationSerializer, CarInformationSerializer, ReportFilter, ReportSerializer
 from tracking.models import Location
 from django_filters.rest_framework import DjangoFilterBackend
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 
 
 class LocationAPIView(CreateAPIView):
@@ -28,7 +26,6 @@ class CarInformationView(RetrieveAPIView):
 
 
 # A decorator that caches 🔂 the page for 3 minutes.
-@method_decorator(cache_page(60 * 3), name='dispatch')
 class ReportAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend]

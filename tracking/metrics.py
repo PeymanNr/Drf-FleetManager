@@ -1,14 +1,13 @@
-from django.core.cache import cache
 from .api.utils import calculate_distance_points
 from .models import Location
 from datetime import timedelta
 
 
 def is_inside_tehran(latitude, longitude):
-    cache_key = f'is_inside_tehran_{latitude}_{longitude}'
-    result = cache.get(cache_key)
-    if result is not None:
-        return result
+    # cache_key = f'is_inside_tehran_{latitude}_{longitude}'
+    # result = cache.get(cache_key)
+    # if result is not None:
+    #     return result
 
     tehran_boundary = {
         'latitude_min': 35.5,
@@ -69,7 +68,6 @@ def get_filtered_speed_records(car_id, start_date, end_date):
 
         duration = end_location.created_at - start_location.created_at
 
-        # total_distance += distance
         total_duration += duration
 
     return total_distance, total_duration.total_seconds()
