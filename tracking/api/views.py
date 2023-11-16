@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from tracking.api.serializers import LocationSerializer, CarInformationSerializer, ReportFilter, ReportSerializer
 from tracking.models import Location
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 class LocationAPIView(CreateAPIView):
     queryset = Location.objects.all()
@@ -25,7 +26,6 @@ class CarInformationView(RetrieveAPIView):
         return queryset
 
 
-# A decorator that caches 🔂 the page for 3 minutes.
 class ReportAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend]
@@ -36,7 +36,7 @@ class ReportAPIView(ListAPIView):
         car_id = self.kwargs.get('car_id')
 
         try:
-            location = Location.objects.filter(car_id=car_id).order_by('-created_at').first()
+            location = Location.objects.filter(car_id=car_id).order_by('created_at').first()
             if not location:
                 raise Location.DoesNotExist
         except Location.DoesNotExist:

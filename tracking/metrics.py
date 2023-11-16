@@ -4,10 +4,6 @@ from datetime import timedelta
 
 
 def is_inside_tehran(latitude, longitude):
-    # cache_key = f'is_inside_tehran_{latitude}_{longitude}'
-    # result = cache.get(cache_key)
-    # if result is not None:
-    #     return result
 
     tehran_boundary = {
         'latitude_min': 35.5,
@@ -18,9 +14,9 @@ def is_inside_tehran(latitude, longitude):
 
     if (tehran_boundary['latitude_min'] <= latitude <= tehran_boundary['latitude_max'] and
             tehran_boundary['longitude_min'] <= longitude <= tehran_boundary['longitude_max']):
-        return 'It is inside Tehran'
-    else:
-        return 'It is not inside Tehran'
+        return True
+
+    return False
 
 
 def get_filtered_acceleration_records(car_id, start_date, end_date):
@@ -86,11 +82,11 @@ def calculate_distance_outside_tehran(car_id, start_date, end_date):
 
     for location in filtered_locations:
         if prev_location and not is_inside_tehran(location.latitude, location.longitude):
-            distance = calculate_distance_points(
+            total_distance += calculate_distance_points(
                 prev_location.latitude, prev_location.longitude, location.latitude, location.longitude
             )
             duration = location.created_at - prev_location.created_at
-            total_distance += distance
+            # total_distance += distance
             total_duration += duration
 
         prev_location = location
