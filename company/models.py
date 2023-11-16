@@ -12,7 +12,7 @@ class Company(models.Model):
                 regex=r'^[آ-ی\s]+$',
                 message='The name should only contain Farsi letters and spaces',
                 code='invalid_name'
-            )
+    )
     user = models.ForeignKey(User, verbose_name=_('user'), on_delete=models.PROTECT)
     name = models.CharField(max_length=255, validators=[name_regex], verbose_name=_('name'))
     car_count = models.PositiveIntegerField(default=0, verbose_name=_('car count'))
@@ -52,5 +52,4 @@ class Car(models.Model):
         db_table = 'car'
 
     def __str__(self):
-        return self.company.name
-
+        return str(self.id)

@@ -26,7 +26,7 @@ class SendOTPView(APIView):
                 previous_otp.delete()
 
             otp_code = ''.join(random.choices("0123456789", k=6))
-            sender = '0018018949161'
+            sender = '10008663'
             message = f'Code OTP: {otp_code}'
             sms_util = SMSUtil(api_key)
 
