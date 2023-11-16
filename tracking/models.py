@@ -8,9 +8,11 @@ class Location(models.Model):
     latitude = models.FloatField(verbose_name=_('latitude'))
     longitude = models.FloatField(verbose_name=_('longitude'))
     speed = models.FloatField(verbose_name=_('speed'))
-    car_id = models.ForeignKey(Car, verbose_name=_('car_id'), on_delete=models.CASCADE)
+    car_id = models.ForeignKey(Car, verbose_name=_('car_id'),
+                               on_delete=models.CASCADE)
     acceleration = models.FloatField(verbose_name=_('acceleration'))
-    created_at = models.DateTimeField(default=timezone.now, verbose_name=_('created_at'))
+    created_at = models.DateTimeField(default=timezone.now,
+                                      verbose_name=_('created_at'))
 
     class Meta:
         verbose_name = _('location')

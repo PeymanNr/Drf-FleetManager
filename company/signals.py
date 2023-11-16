@@ -4,7 +4,7 @@ from company.models import Car, Company
 
 
 @receiver(post_save, sender=Company)
-def create_initial_cars(sender, instance, created,  **kwargs):
+def create_initial_cars(sender, instance, created, **kwargs):
     if created:
         car_counts = instance.car_count
 

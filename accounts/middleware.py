@@ -13,15 +13,19 @@ class TokenMiddleware:
 
         if 'HTTP_AUTHORIZATION' in request.META:
             authorization = request.META['HTTP_AUTHORIZATION'].split()
-            if len(authorization) == 2 and authorization[0].lower() == 'bearer':
+            if (len(authorization) == 2 and authorization[0].lower() ==
+                    'bearer'):
                 token = authorization[1]
                 refresh = RefreshToken(token)
                 user = refresh.user
                 if not user.is_active:
-                    return Response({'detail': _('User is not active.')}, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response({'detail': _('User is not active.')},
+                                    status=status.HTTP_401_UNAUTHORIZED)
                 if refresh.access_token.is_expired():
-                    return Response({'detail': _('Token has expired.')}, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response({'detail': _('Token has expired.')},
+                                    status=status.HTTP_401_UNAUTHORIZED)
                 request.user = user
-                return Response({'detail': _('Token is invalid or expired.')}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'detail': _('Token is invalid or expired.')},
+                                status=status.HTTP_401_UNAUTHORIZED)
 
         return response

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django_filters import rest_framework as filters
-from tracking.metrics import is_inside_tehran, get_filtered_speed_records, get_filtered_acceleration_records, \
+from tracking.metrics import is_inside_tehran, get_filtered_speed_records, \
+    get_filtered_acceleration_records, \
     calculate_distance, calculate_distance_outside_tehran
 from tracking.models import Location
 
@@ -18,7 +19,9 @@ class CarInformationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Location
-        fields = ('car_id', 'is_tehran', 'is_speed_high', 'is_acceleration_high', 'latitude', 'longitude', 'created_at')
+        fields = (
+            'car_id', 'is_tehran', 'is_speed_high', 'is_acceleration_high',
+            'latitude', 'longitude', 'created_at')
 
     def get_is_tehran(self, obj):
         return is_inside_tehran(obj.latitude, obj.longitude)
@@ -55,7 +58,8 @@ class ReportSerializer(serializers.ModelSerializer):
         model = Location
         fields = [
             'start_date', 'end_date', 'car_id', 'distance_dangerous_speed',
-            'distance_dangerous_acceleration', 'calculate_distance_outside_tehran', 'calculate_distance'
+            'distance_dangerous_acceleration',
+            'calculate_distance_outside_tehran', 'calculate_distance'
         ]
 
     def to_representation(self, instance):
@@ -67,35 +71,48 @@ class ReportSerializer(serializers.ModelSerializer):
 
     def get_distance_dangerous_speed(self, obj):
         car_id = obj.car_id
-        start_date = self.context.get('request').query_params.get('start_date', None)
-        end_date = self.context.get('request').query_params.get('end_date', None)
+        start_date = self.context.get('request').query_params.get('start_date',
+                                                                  None)
+        end_date = self.context.get('request').query_params.get('end_date',
+                                                                None)
 
         if start_date is not None and end_date is not None:
             distance = get_filtered_speed_records(car_id, start_date, end_date)
-            return distance if distance is not None else 0  # Replace 0 with a default value if needed
+            return distance if distance is not None else 0
+            # Replace 0 with a default value if needed
         else:
             return 0
 
     def get_distance_dangerous_acceleration(self, obj):
         car_id = obj.car_id
-        start_date = self.context.get('request').query_params.get('start_date', None)
-        end_date = self.context.get('request').query_params.get('end_date', None)
-        distance_acceleration = get_filtered_acceleration_records(car_id, start_date, end_date)
+        start_date = self.context.get('request').query_params.get('start_date',
+                                                                  None)
+        end_date = self.context.get('request').query_params.get('end_date',
+                                                                None)
+        distance_acceleration = get_filtered_acceleration_records(car_id,
+                                                                  start_date,
+                                                                  end_date)
 
         return distance_acceleration
 
     def get_calculate_distance_outside_tehran(self, obj):
         car_id = obj.car_id
-        start_date = self.context.get('request').query_params.get('start_date', None)
-        end_date = self.context.get('request').query_params.get('end_date', None)
-        distance_outside_tehran = calculate_distance_outside_tehran(car_id, start_date, end_date)
+        start_date = self.context.get('request').query_params.get('start_date',
+                                                                  None)
+        end_date = self.context.get('request').query_params.get('end_date',
+                                                                None)
+        distance_outside_tehran = calculate_distance_outside_tehran(car_id,
+                                                                    start_date,
+                                                                    end_date)
 
         return distance_outside_tehran
 
     def get_calculate_distance(self, obj):
         car_id = obj.car_id
-        start_date = self.context.get('request').query_params.get('start_date', None)
-        end_date = self.context.get('request').query_params.get('end_date', None)
+        start_date = self.context.get('request').query_params.get('start_date',
+                                                                  None)
+        end_date = self.context.get('request').query_params.get('end_date',
+                                                                None)
         calculate = calculate_distance(car_id, start_date, end_date)
 
         return calculate

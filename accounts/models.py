@@ -1,6 +1,7 @@
 import re
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
+    PermissionsMixin
 
 
 class CustomUserManager(BaseUserManager):
@@ -29,4 +30,5 @@ class User(AbstractBaseUser, PermissionsMixin):
     def validate_username(self):
         pattern = r'^[a-zA-Z ]+$'
         if not re.match(pattern, self.username):
-            raise ValueError('Username must contain only lowercase, uppercase and space letters.')
+            raise ValueError(
+                'Username must contain only lowercase, uppercase and space letters.')
